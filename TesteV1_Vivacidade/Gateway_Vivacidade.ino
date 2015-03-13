@@ -183,5 +183,7 @@ void loop() {
     		readSerial += c;
     		Serial.print(c);
     	}
+	}else{
+		role = role_listener;
 	}
 }
