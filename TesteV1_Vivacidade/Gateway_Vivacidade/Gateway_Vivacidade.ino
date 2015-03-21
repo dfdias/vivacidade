@@ -101,7 +101,7 @@ void setup() {
  Serial.println("Setup DONE");
 
  printf("*** CHANGING ROLE -- PRESS 'S' TO SWITCH TO: SENDER\n\r");
-#ifndef
+#ifndef YUN
 FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
 #endif
 }
