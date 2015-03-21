@@ -9,6 +9,7 @@
 #include <SPI.h>
 #include "printf.h"
 #include "RF24.h"
+#include "FastLED.h"
 
 const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 
@@ -38,6 +39,11 @@ YunClient yun;
 PubSubClient client("shineupon.me", 1883, callback, yun);
 #endif
 
+// How many leds in your strip?
+#define NUM_LEDS 9
+#define DATA_PIN 2
+// Define the array of leds
+CRGB leds[NUM_LEDS];
 
 // Callback function
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -95,11 +101,20 @@ void setup() {
  Serial.println("Setup DONE");
 
  printf("*** CHANGING ROLE -- PRESS 'S' TO SWITCH TO: SENDER\n\r");
-
+#ifndef
+FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+#endif
 }
 
 void loop() {
+#ifdef YUN
     client.loop();
+    
+#else
+	static uint8_t hue = 0;
+    FastLED.showColor(CHSV(hue, 255, 255));
+#endif
+
 
  	if (role == role_listener)
 	{
@@ -107,7 +122,7 @@ void loop() {
 		{
 			// Dump the payloads until we've gotten everything
 			bool done = false;
-			while (!done)
+			while (!done) 
 			{
 				size_t len = radio.getDynamicPayloadSize();
 				packet[len] = 0;
@@ -129,7 +144,10 @@ void loop() {
 
 				// Spew it
 				printf("Got payload: %s\n\r",payload);
-
+#ifndef YUN
+				hue = (payload[0]-'0')*100+(payload[1]-'0')*10+(payload[2]-'0');
+				printf("Hue: %i\n", hue);
+#endif
 				// Delay just a little bit to let the other unit
 				// make the transition to receiver
 				delay(20);
@@ -232,3 +250,6 @@ void loop() {
 		role = role_listener;
 	}
 }
+
+
+
