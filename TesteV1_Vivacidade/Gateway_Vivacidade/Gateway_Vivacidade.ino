@@ -109,7 +109,14 @@ FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
 void loop() {
 #ifdef YUN
     client.loop();
-    
+
+
+ if(!client.connected()) {
+  client.connect("hackAveiroMQTT");
+  Serial.println("Reconnected");
+  client.subscribe("/hackaveiro/bitmap");
+ }
+
 #else
 	static uint8_t hue = 0;
     FastLED.showColor(CHSV(hue, 255, 255));
