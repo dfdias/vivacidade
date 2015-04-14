@@ -1,0 +1,72 @@
+//vu_meter.ino
+//vu-meter for arduino using fastled libraries
+include <FastLED.h>
+//neopixel parameters
+#define pixel_num
+#define pixel_pin
+
+
+//sound analysis parameters
+#define lft_channel A1
+#define rght_channel A2
+#define DC_OFFSET  0  // DC offset in mic signal - if unusure, leave 0
+#define NOISE     20  // Noise/hum/interference in mic signal
+#define SAMPLES   40  // Length of buffer for dynamic level adjustment
+#define TOP       (N_PIXELS + 2) // Allow dot to go slightly off scale
+#define PEAK_FALL 60  // Rate of peak falling dot
+
+byte
+  peak      = 0,      // Used for falling dot
+  dotCount  = 0,      // Frame counter for delaying dot-falling speed
+  volCount  = 0;      // Frame counter for storing past volume data
+int
+  lft[SAMPLES],       // Collection of prior volume samples
+  rght[SAMPLES],       // Collection of prior volume samples
+  lvl       = 20,      // Current "dampened" audio level
+  minLvlAvg = 0,      // For dynamic adjustment of graph low & high
+  maxLvlAvg = 512;
+
+void setup() {
+
+  // This is only needed on 5V Arduinos (Uno, Leonardo, etc.).
+  // Connect 3.3V to mic AND TO AREF ON ARDUINO and enable this
+  // line.  Audio samples are 'cleaner' at 3.3V.
+  // COMMENT OUT THIS LINE FOR 3.3V ARDUINOS (FLORA, ETC.):
+analogReference(EXTERNAL);
+
+  memset(vol, 0, sizeof(vol));
+  strip.begin();
+}
+
+void loop() {
+  uint8_t  i;
+  uint16_t minLvl, maxLvl;
+  int      lft,rght, height;
+
+  //                        left channel analysis 
+
+  lft  = analogRead(lft_channel);           // Raw reading from mic
+  lft  = abs(lft - 512 - DC_OFFSET); 		  // Center on zero
+  lft   = (lft <= NOISE) ? 0 : (lft - NOISE); // Remove noise/hum
+  lvl = ((lvl * 7) + n) >> 3;    // "Dampened" reading (else looks twitchy)
+
+
+
+  //                        right channel analyis
+
+
+  rght   = analogRead(rght_channel);                  // Raw reading from mic
+  rght   = abs(rght - 512 - DC_OFFSET); // Center on zero
+  rght   = (rght <= NOISE) ? 0 : (rght - NOISE);             // Remove noise/hum
+  lvl = ((lvl * 7) + n) >> 3;    // "Dampened" reading (else looks twitchy)
+
+CGRB leds[pixel_num]
+
+
+
+
+// the "only" thing that is missing is the connection to the neopixel....
+
+//work in progress
+
+
